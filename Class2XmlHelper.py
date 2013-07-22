@@ -76,7 +76,7 @@ class Class2XmlHelper(object):
     def __handleList(self, members):
         node = self.doc.createElement(members)
         for member in getattr(self.obj, members):
-            value = self.doc.createTextNode(getattr(self.obj, member))
+            value = self.doc.createTextNode(member)
             node.appendChild(value)
         self.root.appendChild(node)
     
