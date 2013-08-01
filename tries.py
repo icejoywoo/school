@@ -1,6 +1,6 @@
 # ^_^ encoding: utf-8 ^_^
 # @brief: Just a simple implementation of tries 
-#     (supporting characters [a-z] [A-Z] [0-9], 
+#     (supporting all characters, 
 #     refer(cn): http://godorz.info/2009/11/using-tries/,
 #     refer(en): http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=usingTries)
 # @class: Tries (字典树)
@@ -13,13 +13,6 @@ class TrieNode:
         self.words = 0
         self.prefixes = 0
         self.nodes = {}
-        import string
-        for i in string.lowercase:
-            self.nodes[i] = None
-        for i in string.uppercase:
-            self.nodes[i] = None
-        for i in string.digits:
-            self.nodes[i] = None
 
 class Trie:
     
@@ -35,7 +28,7 @@ class Trie:
         else:
             node.prefixes += 1
             k = word[0]
-            if node.nodes[k] == None:
+            if not node.nodes.has_key(k):
                 node.nodes[k] = TrieNode()
             self.__add_word(node.nodes[k], word[1:])
 
@@ -68,15 +61,17 @@ class Trie:
 if __name__ == "__main__":
     trie = Trie()
     trie.add_word("")
-    trie.add_word("")
+    trie.add_word("\\\\")
     trie.add_word("test")
     trie.add_word("test")
     trie.add_word("test")
     trie.add_word("testabc")
     trie.add_word("123")
+    trie.add_word("中文测试")
+    trie.add_word("中文")
     
     assert trie.count_words("test") == 3
-    assert trie.count_words("") == 2
+    assert trie.count_words("") == 1
     assert trie.count_words("testabc") == 1
     assert trie.count_words("123") == 1
     
@@ -85,3 +80,6 @@ if __name__ == "__main__":
     
     assert trie.find_word("testa") == False
     assert trie.find_word("test") == True
+    
+    assert trie.count_words("中文测试") == 1
+    assert trie.count_prefixes("中文测试") == 1
