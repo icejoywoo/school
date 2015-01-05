@@ -88,10 +88,22 @@ fun is_older_optional (x : (int*int*int), y : (int*int*int)) =
 
 (* https://gist.github.com/dmalikov/4615885 *)
 fun oldest (dates: (int*int*int) list) =
-    let
-        val tl_oldest = oldest(tl dates)
-    in
-        if null dates then (print("x"); NONE)
-        else if (isSome tl_oldest) andalso is_older(hd dates, valOf tl_oldest) then tl_oldest
-             else SOME (hd dates)
-    end
+    if null dates then NONE
+    else
+        let
+            val tl_oldest = oldest(tl dates)
+        in
+            if isSome(tl_oldest) andalso is_older(valOf(tl_oldest), (hd dates)) then tl_oldest
+            else SOME (hd dates)
+        end
+
+fun oldest1 (dates: (int*int*int) list) =
+    case dates of
+      [] => NONE
+    | _ => 
+        let
+            val tl_oldest = oldest(tl dates);
+        in
+            if (isSome tl_oldest) andalso is_older(valOf tl_oldest, hd dates) then tl_oldest
+            else SOME (hd dates)
+        end
