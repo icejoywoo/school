@@ -6,36 +6,31 @@ fun is_older (x : (int*int*int), y : (int*int*int)) =
     else false
 
 fun number_in_month (dates : (int*int*int) list, month) =
-    case dates of
-      [] => 0
-    | x::xs' => 
-        if (#2 x) = month
-        then 1 + number_in_month(xs', month)
-        else number_in_month(xs', month)
+    if null dates then 0
+    else
+        if #2 (hd dates) = month
+        then 1 + number_in_month(tl dates, month)
+        else number_in_month(tl dates, month)
 
 fun number_in_months (dates : (int*int*int) list, months: int list) =
-    case months of
-      [] => 0
-    | x::xs' => number_in_month(dates, x) + number_in_months(dates, xs')
+    if null months then 0
+    else number_in_month(dates, hd months) + number_in_months(dates, tl months)
     
 fun dates_in_month (dates : (int*int*int) list, month) =
-    case dates of
-      [] => []
-    | x::xs' => 
-        if (#2 x) = month
-        then x :: dates_in_month(xs', month)
-        else dates_in_month(xs', month)
+    if null dates then []
+    else
+        if #2 (hd dates) = month
+        then hd dates :: dates_in_month(tl dates, month)
+        else dates_in_month(tl dates, month)
 
 fun append (xs: 'a list, ys: 'a list) =
     if null xs
     then ys
     else hd(xs) :: append(tl(xs), ys)
 
-
 fun dates_in_months (dates : (int*int*int) list, months: int list) =
-    case months of
-      [] => []
-    | x::xs' => append(dates_in_month(dates, x), dates_in_months(dates, xs'))
+    if null months then []
+    else append(dates_in_month(dates, hd months), dates_in_months(dates, tl months))
 
 fun get_nth (strings : string list, index: int) =
     if index = 1
@@ -52,18 +47,16 @@ fun date_to_string (date : (int*int*int)) =
 
 (* compute sum of first n elements *)
 fun sum_list (numbers: int list, n : int) =
-    case n of
-      0 => 0
-    | _ => case numbers of
-              [] => 0
-            | x::xs' => x + sum_list(xs', n-1)
+    if n = 0 then 0
+    else if null numbers then 0
+    else hd numbers + sum_list(tl numbers, n-1)
 
 fun number_before_reaching_sum (sum: int, numbers: int list) =
     let
         fun helper (index: int, first_sum: int, numbers: int list) =
             if hd numbers >= first_sum
             then index - 1
-            else (print (Int.toString first_sum ^ "\n"); helper (index + 1, first_sum - hd numbers, tl numbers))
+            else helper (index + 1, first_sum - hd numbers, tl numbers)
     in
         helper (1, sum, numbers)
     end
@@ -98,9 +91,8 @@ fun oldest (dates: (int*int*int) list) =
         end
 
 fun oldest1 (dates: (int*int*int) list) =
-    case dates of
-      [] => NONE
-    | _ => 
+    if null dates then NONE
+    else
         let
             val tl_oldest = oldest(tl dates);
         in
