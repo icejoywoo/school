@@ -107,3 +107,41 @@ fun oldest1 (dates: (int*int*int) list) =
             if (isSome tl_oldest) andalso is_older(valOf tl_oldest, hd dates) then tl_oldest
             else SOME (hd dates)
         end
+
+fun in_list (x: int, l: int list) =
+    if null l
+    then false
+    else
+        if x = hd l then true
+        else in_list(x, tl l)
+
+fun remove_duplicates (l: int list) =
+    if null l then []
+    else
+        if in_list(hd l, tl l) then remove_duplicates(tl l)
+        else hd l :: remove_duplicates(tl l)
+
+fun number_in_months_chanllenge (dates : (int*int*int) list, months : int list) =
+    number_in_months(dates, remove_duplicates(months))
+
+fun dates_in_months_chanllenge (dates : (int*int*int) list, months : int list) =
+    dates_in_months(dates, remove_duplicates(months))
+
+fun reasonable_date(date : int*int*int) =
+    let
+        val (year, month, day) = date
+    in
+        year > 0
+        andalso month >= 1
+        andalso month <= 12
+        andalso day > 0
+        andalso (
+            (in_list(month, [1,3,5,7,8,10,12]) andalso day <= 31)
+            orelse (in_list(month, [4,6,9,11]) andalso day <= 30)
+            orelse (month = 2) andalso (
+                if year mod 400 = 0 then day <= 29
+                else if (year mod 4 = 0) andalso (year mod 100 <> 0) then day <= 29
+                else day <= 28
+            )
+        )
+    end
