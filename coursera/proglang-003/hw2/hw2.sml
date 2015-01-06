@@ -17,10 +17,8 @@ fun all_except_option (e : string, l : string list) =
                             else x :: remove(s, xs')
         val removed_list = remove(e, l)
     in
-        case removed_list of
-              [] => NONE
-            | _ => if removed_list = l then NONE
-                   else SOME removed_list
+        if removed_list = l then NONE
+        else SOME removed_list
     end
 
 fun get_substitutions1 (strings : string list list, s: string) =
@@ -79,18 +77,6 @@ fun card_value (c : card) =
         | Num x => x
         | _ => 10
 
-fun remove_card_old (cs : card list, c : card, e : exn) =
-    let
-        fun helper (cs, c, flag) =
-            case cs of
-                  [] => if flag then [] else raise e
-                | x::xs' => if flag then x :: helper(xs', c, flag)
-                            else if x = c then helper(xs', c, true)
-                            else x :: helper(xs', c, flag)
-    in
-        helper (cs, c, false)
-    end
-
 (* more clear *)
 fun remove_card (cs : card list, c : card, e : exn) =
     let
@@ -103,27 +89,6 @@ fun remove_card (cs : card list, c : card, e : exn) =
                                      else x :: helper(xs', c, flag)
     in
         helper (cs, c, false)
-    end
-
-fun all_same_color_old (cs : card list) =
-    let
-        fun helper (cs : card list, color : color option) =
-            let
-                fun inner (cs) =
-                    case cs of
-                          [] => true
-                        | x::xs' => helper (xs', SOME(card_color x))
-            in
-                case color of
-                  NONE => inner(cs)
-                | SOME c => case cs of
-                                  [] => true
-                                | x::xs' => if card_color(x) = c then helper (xs', SOME(card_color x))
-                                            else false
-            end
-            
-    in
-        helper (cs, NONE)
     end
 
 fun all_same_color (cs : card list) =
@@ -152,5 +117,81 @@ fun score (cs : card list, goal : int) =
     end
 
 fun officiate (cs : card list, mvs : move list, goal : int) =
-    10
+    let
+        fun helper (cs : card list, mvs : move list, goal : int, held_cards: card list) =
+            case mvs of
+                  [] =>  score(held_cards, goal)
+                | x::xs' => case (x, cs) of
+                              (Discard c, _) => helper(cs, xs', goal, remove_card(held_cards, c, IllegalMove))
+                            | (Draw, []) => score(held_cards, goal)
+                            | (Draw, c::cs') => let
+                                                    val current_score = score(c :: held_cards, goal)
+                                                in
+                                                    if current_score > goal then current_score
+                                                    else helper(cs', xs', goal, c :: held_cards)
+                                                end
+    in
+        helper (cs, mvs, goal, [])
+    end
+
+fun score_chanllenge (cs : card list, goal : int) =
+    let
+        fun card_value (c : card, ace : int) =
+            case #2 c of
+                  Ace => ace
+                | Num x => x
+                | _ => 10
+
+        fun sum_cards (cs : card list, ace : int) =
+            let
+                fun helper (cs : card list, acc : int) =
+                    case cs of
+                          [] => acc
+                        | x::xs' => helper(xs', card_value(x, ace) + acc)
+            in
+                helper (cs, 0)
+            end
+
+        val sum_ace1 = sum_cards(cs, 1)
+        val sum_ace11 = sum_cards(cs, 11)
+
+        val pre_score_ace1 = if (sum_ace1 > goal) then 3 * (sum_ace1 - goal) else (goal - sum_ace1)
+        val pre_score_ace11 = if (sum_ace11 > goal) then 3 * (sum_ace11 - goal) else (goal - sum_ace11)
+
+        val min_pre_score = if pre_score_ace1 > pre_score_ace11 then pre_score_ace11
+                            else pre_score_ace1
+    in
+        if all_same_color(cs) then min_pre_score div 2
+        else min_pre_score
+    end
+
+fun officiate_chanllenge (cs : card list, mvs : move list, goal : int) =
+    let
+        fun helper (cs : card list, mvs : move list, goal : int, held_cards: card list) =
+            case mvs of
+                  [] =>  score_chanllenge(held_cards, goal)
+                | x::xs' => case (x, cs) of
+                              (Discard c, _) => helper(cs, xs', goal, remove_card(held_cards, c, IllegalMove))
+                            | (Draw, []) => score_chanllenge(held_cards, goal)
+                            | (Draw, c::cs') => let
+                                                    val current_score = score_chanllenge(c :: held_cards, goal)
+                                                in
+                                                    if current_score > goal then current_score
+                                                    else helper(cs', xs', goal, c :: held_cards)
+                                                end
+    in
+        helper (cs, mvs, goal, [])
+    end
+
+(*
+fun careful_player (cs : card list, goal : int) =
+    let
+        fun helper (cs : card list, goal : int, held_cards : card list) =
+            case cs of
+                  [] => []
+                | head::(neck::rest) => 
+    in
+        helper (cs, goal, [])
+    end
+*)  
 
