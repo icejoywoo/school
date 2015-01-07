@@ -5,10 +5,6 @@
 
 
 val test1 = is_older((1,2,3),(2,3,4)) = true
-val test1 = is_older((1,2,3),(1,3,4)) = true
-val test1 = is_older((1,2,3),(1,2,4)) = true
-val test1 = is_older((1,2,3),(1,2,3)) = false
-
 
 val test2 = number_in_month([(2012,2,28),(2013,12,1)],2) = 1
 val test2 = number_in_month([(2012,2,28),(2013,12,1),(2013,2,1)],2) = 2
@@ -30,3 +26,17 @@ val test9 = what_month(70) = 3
 val test10 = month_range(31, 34) = [1,2,2,2]
 
 val test11 = oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
+
+val test12 = is_older((1,2,3),(1,3,4)) = true
+val test13 = is_older((1,2,3),(1,2,4)) = true
+val test14 = is_older((1,2,3),(1,2,3)) = false
+
+val test15 = number_in_months_challenge([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,3,4]) = 3
+val test16 = dates_in_months_challenge([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,3,4]) = [(2012,2,28),(2011,3,31),(2011,4,28)]
+
+val test17 = reasonable_date((0, 2, 5)) = false
+val test18 = reasonable_date((200, 0, 5)) = false
+
+val test19 = reasonable_date((2014, 2, 29)) = false
+val test20 = reasonable_date((2014, 2, 28)) = true
+val test21 = reasonable_date((2014, 1, 31)) = true

@@ -110,14 +110,14 @@ fun remove_duplicates (l: int list) =
         if in_list(hd l, tl l) then remove_duplicates(tl l)
         else hd l :: remove_duplicates(tl l)
 
-fun number_in_months_chanllenge (dates : (int*int*int) list, months : int list) =
+fun number_in_months_challenge (dates : (int*int*int) list, months : int list) =
     number_in_months(dates, remove_duplicates(months))
 
-fun dates_in_months_chanllenge (dates : (int*int*int) list, months : int list) =
+fun dates_in_months_challenge (dates : (int*int*int) list, months : int list) =
     dates_in_months(dates, remove_duplicates(months))
 
 (* 13 *)
-fun reasonable_date(date : int*int*int) =
+fun reasonable_date (date : int*int*int) =
     let
         val (year, month, day) = date
     in
