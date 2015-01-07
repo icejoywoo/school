@@ -50,5 +50,6 @@ val test16 = ((officiate_challenge([(Clubs,Jack),(Spades,Num(8))],
                          42);
                false) 
               handle IllegalMove => true)
-             
-             
+
+val test17 = officiate_challenge([(Hearts, Ace),(Clubs, Num 4)],[], 15) = 7
+val test18 = officiate_challenge([(Hearts, Ace),(Clubs, Num 4)],[Draw, Draw, Draw], 15) = 0

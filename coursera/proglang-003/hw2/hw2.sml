@@ -65,16 +65,16 @@ exception IllegalMove
 
 (* put your solutions for problem 2 here *)
 fun card_color (c : card) =
-    case #1 c of
-          Spades => Black
-        | Clubs => Black
-        | Diamonds => Red
-        | Hearts => Red
+    case c of
+          (Spades, _) => Black
+        | (Clubs, _) => Black
+        | (Diamonds, _) => Red
+        | (Hearts, _) => Red
 
 fun card_value (c : card) =
-    case #2 c of
-          Ace => 11
-        | Num x => x
+    case c of
+          (_, Ace) => 11
+        | (_, Num x) => x
         | _ => 10
 
 (* more clear *)
