@@ -134,7 +134,7 @@ fun officiate (cs : card list, mvs : move list, goal : int) =
         helper (cs, mvs, goal, [])
     end
 
-fun score_chanllenge (cs : card list, goal : int) =
+fun score_challenge (cs : card list, goal : int) =
     let
         fun card_value (c : card, ace : int) =
             case #2 c of
@@ -165,16 +165,16 @@ fun score_chanllenge (cs : card list, goal : int) =
         else min_pre_score
     end
 
-fun officiate_chanllenge (cs : card list, mvs : move list, goal : int) =
+fun officiate_challenge (cs : card list, mvs : move list, goal : int) =
     let
         fun helper (cs : card list, mvs : move list, goal : int, held_cards: card list) =
             case mvs of
-                  [] =>  score_chanllenge(held_cards, goal)
+                  [] =>  score_challenge(held_cards, goal)
                 | x::xs' => case (x, cs) of
                               (Discard c, _) => helper(cs, xs', goal, remove_card(held_cards, c, IllegalMove))
-                            | (Draw, []) => score_chanllenge(held_cards, goal)
+                            | (Draw, []) => score_challenge(held_cards, goal)
                             | (Draw, c::cs') => let
-                                                    val current_score = score_chanllenge(c :: held_cards, goal)
+                                                    val current_score = score_challenge(c :: held_cards, goal)
                                                 in
                                                     if current_score > goal then current_score
                                                     else helper(cs', xs', goal, c :: held_cards)

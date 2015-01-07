@@ -38,14 +38,14 @@ val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
                false) 
               handle IllegalMove => true)
 
-val test14 = officiate_chanllenge([(Hearts, Ace),(Clubs, Num 4)],[Draw], 15) = 2
+val test14 = officiate_challenge([(Hearts, Ace),(Clubs, Num 4)],[Draw], 15) = 2
 
-val test15 = officiate_chanllenge([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)],
+val test15 = officiate_challenge([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)],
                        [Draw,Draw,Draw,Draw,Draw],
                        42)
              = 3
 
-val test16 = ((officiate_chanllenge([(Clubs,Jack),(Spades,Num(8))],
+val test16 = ((officiate_challenge([(Clubs,Jack),(Spades,Num(8))],
                          [Draw,Discard(Hearts,Jack)],
                          42);
                false) 
