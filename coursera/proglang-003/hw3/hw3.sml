@@ -80,24 +80,71 @@ fun first_answer f l =
 	end
 
 (* 8 *)
-(* https://github.com/turingman111/proglang/blob/master/ass-03.sml *)
 fun all_answers f l =
 	let
 		fun helper answers =
 			case answers of
-				  NONE::[] => NONE
+				  NONE::[] => []
 				| NONE::xs' => helper xs'
 				| SOME x::[] => x
-				| SOME x::xs' => x :: (helper xs')
-
-		fun transfer lst =
-			case lst of
-				  [] => []
-				| SOME x:: xs' => x @ transfer xs'
-				| NONE::xs'  => transfer xs'
+				| SOME x::xs' => x @ (helper xs')
 	in
 		case l of
 			  [] => SOME []
-			| _ =>
-		SOME (transfer (helper (map f l)))
+			| _ => let
+						val v = helper (map f l)
+					in
+						case v of
+							  [] => NONE
+							| _ => SOME v
+					end
 	end
+
+(* 9 *)
+val count_wildcards = g (fn x => 1) (fn y => 0)
+
+val count_wild_and_variable_lengths = g (fn x => 1) (fn y => String.size y)
+
+fun count_some_var (x, p) =
+	g (fn x => 0) (fn y => if x = y then 1 else 0) p
+
+(* 10 *)
+fun check_pat p =
+	let
+		fun vars p = 
+			case p of
+			    Variable x        => [x]
+			  | TupleP ps         => List.foldl (fn (p,i) => (vars p) @ i) [] ps
+			  | ConstructorP(_,p) => vars p
+			  | _                 => []
+
+		fun repeat lst =
+			case lst of
+				  [] => true
+				| x::xs' => if List.exists (fn y => x = y) xs' then false
+							else repeat xs'
+	in
+		repeat (vars p)
+	end
+
+(* 11 *)
+fun match (v, p) =
+	let
+		fun match_pattern (v, p) =
+			case (v, p) of
+				  (_, Wildcard) => SOME []
+				| (v', Variable s) => SOME [(s, v')]
+				| (Unit, UnitP) => SOME []
+				| (Const x1, ConstP x2) => if x1 = x2 then SOME [] else NONE
+				| (Tuple vs, TupleP ps) => if List.length vs = List.length ps 
+										   then SOME (List.foldl (fn (p,i) => valOf(match_pattern p) @ i) [] (ListPair.zip(vs, ps)))
+										   else NONE
+				| (Constructor(s1,v), ConstructorP(s2,p)) => if s1 = s2 then match_pattern (v, p) else NONE
+				| _ => NONE
+	in
+		match_pattern (v, p)
+	end
+	
+(* 12 *)
+fun first_match x y = SOME []
+

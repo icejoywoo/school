@@ -33,16 +33,25 @@ val test7b = ((first_answer (fn x => if x > 10 then SOME x else NONE) [1,2,3,4,5
 				handle NoAnswer => true)
 
 val test8 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [2,3,4,5,6,7] = NONE
+val test8a = all_answers (fn x => if x > 1 then SOME [x] else NONE) [2,3,4,5,6,7] = SOME [2,3,4,5,6,7]
+val test8b = all_answers (fn x => if x > 4 then SOME [x] else NONE) [2,3,4,5,6,7] = SOME [5,6,7]
+val test8c = all_answers (fn x => if x > 4 then SOME [x] else NONE) [] = SOME []
 
 val test9a = count_wildcards Wildcard = 1
+val test9a1 = count_wildcards (TupleP [Wildcard, Wildcard]) = 2
 
 val test9b = count_wild_and_variable_lengths (Variable("a")) = 1
 
-val test9c = count_some_var ("x", Variable("x")) = 1;
+val test9c = count_some_var ("x", Variable("x")) = 1
 
 val test10 = check_pat (Variable("x")) = true
+val test10a = check_pat (ConstructorP ("hi",TupleP[Variable "x",Variable "x"])) = false
+val test10b = check_pat (ConstructorP ("hi",TupleP[Variable "x",ConstructorP ("yo",TupleP[Variable "x",UnitP])])) = false
 
 val test11 = match (Const(1), UnitP) = NONE
+val test11a = match (Const(1), ConstP(1)) = SOME []
+val test11b = match (Const(1), Variable("xx")) = SOME [("xx",Const 1)]
+val test11c = match (Tuple[Const 17,Unit,Const 4,Constructor ("egg",Const 4),Constructor ("egg",Constructor ("egg",Const 4))],TupleP[Wildcard,Wildcard]) = NONE
 
 val test12 = first_match Unit [UnitP] = SOME []
 
