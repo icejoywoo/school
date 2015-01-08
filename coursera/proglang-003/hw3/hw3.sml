@@ -146,5 +146,11 @@ fun match (v, p) =
 	end
 	
 (* 12 *)
-fun first_match x y = SOME []
+fun first_match v ps =
+	SOME (first_answer (fn x => match (v, x)) ps)
+	handle NoAnswer => NONE
+
+(* 13 *)
+fun typecheck_patterns typs ps =
+	NONE
 
