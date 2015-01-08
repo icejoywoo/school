@@ -45,11 +45,12 @@ fun similar_names (strings : string list list, name : {first: string, middle: st
         fun helper (lst : string list, name : {first: string, middle: string, last: string}) =
             case lst of
                   [] => [name]
-                | x::xs' => name :: helper(xs', {first = x, middle = #middle name, last = #last name})
+                | x::xs' => case name of
+                                {first=a, middle=b, last=c} => name :: helper(xs', {first=x, middle=b, last=c})
         
-        val similar_first_names = get_substitutions2 (strings, #first name)
     in
-        helper (similar_first_names, name)
+        case name of
+            {first=first_name, middle=b, last=c} => helper (get_substitutions2 (strings, first_name), name)
     end
 
 (* you may assume that Num is always used with values 2, 3, ..., 10
@@ -137,9 +138,9 @@ fun officiate (cs : card list, mvs : move list, goal : int) =
 fun score_challenge (cs : card list, goal : int) =
     let
         fun card_value (c : card, ace : int) =
-            case #2 c of
-                  Ace => ace
-                | Num x => x
+            case c of
+                  (_, Ace) => ace
+                | (_, Num x) => x
                 | _ => 10
 
         fun sum_cards (cs : card list, ace : int) =
