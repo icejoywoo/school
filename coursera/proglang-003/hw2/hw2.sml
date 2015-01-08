@@ -137,33 +137,37 @@ fun officiate (cs : card list, mvs : move list, goal : int) =
 
 fun score_challenge (cs : card list, goal : int) =
     let
-        fun card_value (c : card, ace : int) =
-            case c of
-                  (_, Ace) => ace
-                | (_, Num x) => x
-                | _ => 10
+        fun ace_helper (cs, score, ace_counter) =
+            case cs of
+                  [] => (score, ace_counter)
+                | head::tail => case head of
+                                    (_, Ace) => ace_helper (tail, score+card_value(head), ace_counter+1)
+                                    | _ => ace_helper (tail, score+card_value(head), ace_counter)
 
-        fun sum_cards (cs : card list, ace : int) =
-            let
-                fun helper (cs : card list, acc : int) =
-                    case cs of
-                          [] => acc
-                        | x::xs' => helper(xs', card_value(x, ace) + acc)
-            in
-                helper (cs, 0)
-            end
+        fun pre_score sum = if (sum > goal) then 3 * (sum - goal) else (goal - sum)
 
-        val sum_ace1 = sum_cards(cs, 1)
-        val sum_ace11 = sum_cards(cs, 11)
+        fun possible_scores (score, ace_counter) =
+            case ace_counter of
+                  0 => [pre_score(score)]
+                | _ => pre_score(score) :: possible_scores (score-10, ace_counter-1)
 
-        val pre_score_ace1 = if (sum_ace1 > goal) then 3 * (sum_ace1 - goal) else (goal - sum_ace1)
-        val pre_score_ace11 = if (sum_ace11 > goal) then 3 * (sum_ace11 - goal) else (goal - sum_ace11)
-
-        val min_pre_score = if pre_score_ace1 > pre_score_ace11 then pre_score_ace11
-                            else pre_score_ace1
+        fun list_min (lst) =
+            case lst of
+                  [] => raise List.Empty
+                | head::[] => head
+                | head::tail => let
+                                    val min = list_min (tail)
+                                in
+                                    if head > min then min
+                                    else head
+                                end
     in
-        if all_same_color(cs) then min_pre_score div 2
-        else min_pre_score
+        let
+            val scores = possible_scores (ace_helper (cs, 0, 0))
+        in
+            if all_same_color(cs) then list_min (scores) div 2
+            else list_min (scores)
+        end
     end
 
 fun officiate_challenge (cs : card list, mvs : move list, goal : int) =
