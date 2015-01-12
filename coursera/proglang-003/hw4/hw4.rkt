@@ -75,10 +75,10 @@
            [f (lambda (v)
              (let ([cache-ret (vector-assoc v cache)])
                (if cache-ret
-                   (cdr cache-ret)
+                   cache-ret
                    (let ([ret (assoc v xs)])
                      (begin
-                       (vector-set! cache index (cons v ret))
+                       (vector-set! cache (remainder index n) ret)
                        (set! index (+ index 1))
                        ret)))))])
     f))
