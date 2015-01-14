@@ -7,7 +7,8 @@
 ;; Uncomment the line below and change HOMEWORK_FILE to the name of your homework file.
 ;;(require "HOMEWORK_FILE")
 
-(require rackunit)
+(require rackunit
+         "hw5.rkt")
 
 (define tests
   (test-suite
