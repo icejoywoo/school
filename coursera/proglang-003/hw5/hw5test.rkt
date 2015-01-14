@@ -48,6 +48,10 @@
    (check-equal? (eval-exp (call (call mupl-map (fun #f "x" (add (var "x") (int 7)))) (apair (int 1) (aunit)))) 
                  (apair (int 8) (aunit)) "mupl-map test")
    
+   ;; mupl-mapAddN test
+   (check-equal? (eval-exp (call (call mupl-mapAddN (int 5)) (apair (int 1) (apair (int 3) (aunit)))))
+                 (apair (int 6) (apair (int 8) (aunit))) "mupl-mapAddN test")
+   
    ;; problems 1, 2, and 4 combined test
    (check-equal? (mupllist->racketlist
    (eval-exp (call (call mupl-mapAddN (int 7))

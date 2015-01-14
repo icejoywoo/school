@@ -142,7 +142,7 @@
 
 (define mupl-mapAddN 
   (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+        (fun #f "f" (call (var "map") (fun #f "x" (add (var "x") (var "f")))))))
 
 ;; Challenge Problem
 
@@ -151,11 +151,13 @@
 ;; We will test this function directly, so it must do
 ;; as described in the assignment
 (define (compute-free-vars e) "CHANGE")
+          
 
 ;; Do NOT share code with eval-under-env because that will make
 ;; auto-grading and peer assessment more difficult, so
 ;; copy most of your interpreter here and make minor changes
 (define (eval-under-env-c e env) "CHANGE")
+          
 
 ;; Do NOT change this
 (define (eval-exp-c e)
