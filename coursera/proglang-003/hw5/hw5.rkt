@@ -150,8 +150,63 @@
 
 ;; We will test this function directly, so it must do
 ;; as described in the assignment
-(define (compute-free-vars e) "CHANGE")
-          
+(define (compute-free-vars e)
+  (letrec ([helper
+            (lambda (e)
+              (cond ([(var? e)
+                      (cons e (set (var-string e)))]
+                     [(int? e)
+                      (begin
+                        (print (format "~v" e))
+                        (cons e (set)))]
+                     [(add? e)
+                      (let ([v1 (helper (add-e1 e))]
+                            [v2 (helper (add-e2 e))])
+                        (cons (add (car v1) (car v2))
+                              (set-union (cdr v2) (cdr v2))))]
+                     [(ifgreater? e)
+                      (let ([v1 (helper (ifgreater-e1 e))]
+                            [v2 (helper (ifgreater-e2 e))]
+                            [v3 (helper (ifgreater-e3 e))]
+                            [v4 (helper (ifgreater-e4 e))])
+                        (cons (ifgreater (car v1) (car v2) (car v3) (car v4))
+                              (set-union (cdr v1) (cdr v2) (cdr v3) (cdr v4))))]
+                     [(fun? e)
+                      (letrec ([v1 (fun-nameopt e)]
+                               [v2 (fun-formal e)]
+                               [r1 (helper (fun-body e))]
+                               [fvs (set-remove (set-remove (cdr r1) v1) v2)])
+                        (cons (fun-challenge v1 v2 (car r1) fvs)
+                              fvs))]
+                     [(call? e)
+                      (let ([v1 (helper (call-funexp e))]
+                            [v2 (helper (call-actual e))])
+                        (cons (call (car v1) (car v2))
+                              (set-union (cdr v1) (cdr v2))))]
+                     [(mlet? e)
+                      (let ([v1 (mlet-var e)]
+                            [r1 (helper (mlet-e e))]
+                            [r2 (helper (mlet-body e))])
+                        (cons (mlet v1 (car r1) (car r2))
+                              (set-remove (set-union (cdr r1) (cdr r2)) v1)))]
+                     [(apair? e)
+                      (let ([v1 (helper (apair-e1 e))]
+                            [v2 (helper (apair-e2 e))])
+                        (cons (apair (car v1) (car v2))
+                              (set-union (cdr v1) (cdr v2))))]
+                     [(fst? e)
+                      (let ([v1 (helper (fst-e e))])
+                        (cons (fst (car v1)) (cdr v1)))]
+                     [(snd? e)
+                      (let ([v1 (helper (snd-e e))])
+                        (cons (snd (car v1)) (cdr v1)))]
+                     [(aunit? e)
+                      (cons e (set))]
+                     [(isaunit? e)
+                      (let ([v1 (helper (isaunit-e e))])
+                        (cons (isaunit (car v1)) (cdr v1)))]
+                     [#t (error "bad MUPL expression to compute free-vars")])))])
+       (car (helper e))))
 
 ;; Do NOT share code with eval-under-env because that will make
 ;; auto-grading and peer assessment more difficult, so
