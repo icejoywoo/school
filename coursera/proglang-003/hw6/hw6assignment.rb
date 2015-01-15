@@ -81,7 +81,12 @@ class MyBoard < Board
     displacement = @current_block.position
 
     # compute block length because there are three different size (3, 4, 5)
-    block_size = @current_block.block_size
+    # Why @current_block can be Piece class instance?
+    begin
+      block_size = @current_block.block_size
+    rescue NoMethodError => e
+      block_size = 4
+    end
 
     (0..(block_size-1)).each{|index|
       current = locations[index]
