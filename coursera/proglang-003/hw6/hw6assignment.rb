@@ -22,25 +22,12 @@ class MyPiece < Piece
   ]
   # your enhancements here
   def self.next_piece (board)
-    if board.cheat
-      if board.score < 100
-        # cheat piece
-        board.cheat = false
-        MyPiece.new(All_My_Pieces.sample, board)
-      else
-        board.cheat = false
-        board.substract_score 100
-        MyPiece.new([[[0, 0]]], board)
-      end
-    else
-      MyPiece.new(All_My_Pieces.sample, board)
-    end
+    MyPiece.new(All_My_Pieces.sample, board)
   end
-
-  def block_size
-    @all_rotations[0].size
+  
+  def self.cheat_piece (board)
+    MyPiece.new([[[0, 0]]], board)
   end
-
 end
 
 class MyBoard < Board
@@ -53,24 +40,24 @@ class MyBoard < Board
     @delay = 500
 
     # the flag to show the cheat button clicked
-    @cheat = false
+    @cheat_enabled = false
   end
 
   def cheat
-    @cheat
-  end
-
-  def cheat= value
-    @cheat = value
-  end
-
-  def substract_score value
-    @score = @score - value
+    if !@cheat_enabled and @score >= 100
+      @cheat_enabled = true
+    end
   end
 
   # gets the next piece
   def next_piece
-    @current_block = MyPiece.next_piece(self)
+    if @cheat_enabled
+      @cheat_enabled = false
+      @score -= 100
+      @current_block = MyPiece.cheat_piece(self)
+    else
+      @current_block = MyPiece.next_piece(self)
+    end
     @current_pos = nil
   end
 
@@ -81,14 +68,7 @@ class MyBoard < Board
     displacement = @current_block.position
 
     # compute block length because there are three different size (3, 4, 5)
-    # Why @current_block can be Piece class instance?
-    begin
-      block_size = @current_block.block_size
-    rescue NoMethodError => e
-      block_size = 4
-    end
-
-    (0..(block_size-1)).each{|index|
+    (0..(locations.size-1)).each{|index|
       current = locations[index]
       @grid[current[1]+displacement[1]][current[0]+displacement[0]] = @current_pos[index]
     }
@@ -110,16 +90,10 @@ class MyTetris < Tetris
   def key_bindings
     super
     # make the piece that is falling rotate 180 degrees
-    @root.bind('u' , proc {
-                     @board.rotate_clockwise
-                     @board.rotate_clockwise
-                     @board.drop_all_the_way
-                   })
+    @root.bind('u' , proc { 2.times { @board.rotate_clockwise } })
 
     # cheat
-    @root.bind('c' , proc {
-                    @board.cheat = true
-                   })
+    @root.bind('c' , proc { @board.cheat })
   end
 end
 
