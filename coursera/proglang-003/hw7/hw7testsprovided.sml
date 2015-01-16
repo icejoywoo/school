@@ -29,6 +29,15 @@ in
 	else (print "preprocess does not flip an improper LineSegment successfully\n")
 end;
 
+let 
+	val Intersect(Point(a, b), Point(c, d)) = preprocess_prog (Intersect(LineSegment(~3.7,1.5,~3.7,1.5),LineSegment(~3.7,1.5,~3.7,1.5)))
+	val Intersect(Point(e, f), Point(g, h)) = Intersect(Point(~3.7,1.5),Point(~3.7,1.5))
+in
+	if real_equal(a,e) andalso real_equal(b,f) andalso real_equal(c,g) andalso real_equal(d,h)
+	then (print "preprocess flips an improper Intersect successfully\n")
+	else (print "preprocess does not flip an improper Intersect successfully\n")
+end;
+
 (* eval_prog tests with Shift*)
 let 
 	val Point(a,b) = (eval_prog (preprocess_prog (Shift(3.0, 4.0, Point(4.0,4.0))), []))
