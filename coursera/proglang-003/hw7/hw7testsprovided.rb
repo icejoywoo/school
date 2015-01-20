@@ -168,5 +168,13 @@ if not (s1.x1 == TWO and s1.y1 == THREE and s1.x2 == SIX and s1.y2 == 9)
 	puts "Shift should shift e by dx and dy"
 end
 
+s = Shift.new(-3.0,3.0,Var.new("x"))
+s1 = s.preprocess_prog.eval_prog([["x", LineSegment.new(2.0,2.0,4.0,4.0)]])
+puts s1
+
+i = Intersect.new(Point.new(2.5,1.5),Intersect.new(LineSegment.new(2.0,1.0,3.0,2.0),Intersect.new(LineSegment.new(0.0,0.0,2.5,1.5),Line.new(1.0,-1.0))))
+i1 = i.preprocess_prog.eval_prog([])
+puts i1
+
 
 
