@@ -212,7 +212,7 @@ fun preprocess_prog (exp) =
 	case exp of
 		  LineSegment (x1, y1, x2, y2) =>
 			if real_close_point (x1, y1) (x2, y2) then Point (x1, y1)
-			else if real_close (x1, y1) then
+			else if real_close (x1, x2) then
 				if y1 < y2 then LineSegment (x1, y1, x2, y2)
 				else LineSegment (x2, y2, x1, y1)
 			else
