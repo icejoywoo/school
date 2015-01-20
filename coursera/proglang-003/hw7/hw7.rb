@@ -55,8 +55,8 @@ class GeometryValue
 
   # like inbetween in sml
   def inbetween(v, end1, end2)
-    (end1 - GeometryExpression::Epsilon <= v and v <= end1 + GeometryExpression::Epsilon) or
-        (end2 - GeometryExpression::Epsilon <= v and v <= end2 + GeometryExpression::Epsilon)
+    (end1 - GeometryExpression::Epsilon <= v and v <= end2 + GeometryExpression::Epsilon) or
+        (end2 - GeometryExpression::Epsilon <= v and v <= end1 + GeometryExpression::Epsilon)
   end
 
   public
@@ -388,8 +388,8 @@ class Intersect < GeometryExpression
   end
 
   def eval_prog env
-    evaled_e1 = @e1.eval_prog(env)
-    evaled_e1.intersect(@e2.eval_prog(env))
+    evaled_e1 = @e1.preprocess_prog.eval_prog(env)
+    evaled_e1.intersect(@e2.preprocess_prog.eval_prog(env))
   end
 
   def shift(dx, dy)
@@ -401,7 +401,7 @@ class Intersect < GeometryExpression
   end
 
   def intersect other
-    other.intersectLineSegment self
+    raise Exception("bad call to intersect: only for shape values")
   end
 
   def intersectPoint p
@@ -433,7 +433,7 @@ class Let < GeometryExpression
   end
 
   def eval_prog env
-    @e2.eval_prog([[@s, @e1.eval_prog(env)]] + env)
+    @e2.preprocess_prog.eval_prog([[@s, @e1.eval_prog(env)]] + env)
   end
 
   def shift(dx, dy)
