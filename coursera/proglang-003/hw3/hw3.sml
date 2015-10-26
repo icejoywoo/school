@@ -70,34 +70,27 @@ fun rev_string l : string =
 (* 7 *)
 fun first_answer f l =
 	let
-		fun helper answers =
-			case answers of
-				  NONE::[] => raise NoAnswer
-				| NONE::xs' => helper xs'
-				| SOME x::_ => x
+		fun helper l =
+			case l of
+				  [] => raise NoAnswer
+				| head::tail => case f head of
+									  NONE => helper tail
+									| SOME v => v
 	in
-		helper (map f l)
+		helper l
 	end
 
 (* 8 *)
 fun all_answers f l =
 	let
-		fun helper answers =
-			case answers of
-				  NONE::[] => []
-				| NONE::xs' => helper xs'
-				| SOME x::[] => x
-				| SOME x::xs' => x @ (helper xs')
+		fun helper l acc =
+			case l of
+				  [] => SOME acc
+				| head::tail => case f head of
+									  NONE => NONE
+									| SOME v => helper tail (acc@v)
 	in
-		case l of
-			  [] => SOME []
-			| _ => let
-						val v = helper (map f l)
-					in
-						case v of
-							  [] => NONE
-							| _ => SOME v
-					end
+		helper l []
 	end
 
 (* 9 *)
