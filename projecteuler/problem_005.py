@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # encoding: utf-8
 
+from __future__ import division
 import math
 
 
@@ -26,13 +27,20 @@ def prime_factor(number):
 
 
 if __name__ == '__main__':
-    m = 0
-    for i in prime_factor(13195):
-        m = max(m, i)
-    print m
+    all_prime = {}
+    for i in range(2, 21):
+        prime_counter = {}
+        for j in prime_factor(i):
+            prime_counter.setdefault(j, 0)
+            prime_counter[j] += 1
+        for k, v in prime_counter.items():
+            if all_prime.get(k, 0) < v:
+                all_prime[k] = v
+    print all_prime
 
-    m = 0
-    for i in prime_factor(600851475143):
-        m = max(m, i)
-    print m
+    r = reduce(lambda x, y: x * y, [k**v for k, v in all_prime.items()])
+
+    for i in range(1, 21):
+        print i, r / i
+    print r
 
