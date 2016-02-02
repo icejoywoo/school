@@ -1,0 +1,7 @@
+mkdir build
+cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/tmp/t2/usr ..
+
+make -j
+make install
