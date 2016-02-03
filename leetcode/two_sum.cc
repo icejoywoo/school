@@ -13,21 +13,21 @@ class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
         map<int, int> d;
-        for (size_t i = 0; i < nums.size(); ++i) {
-            d[nums[i]] = i+1;
-        }
-
         vector<int> ret;
+        map<int, int>::iterator iter;
+
         for (size_t i = 0; i < nums.size(); ++i) {
             int diff = target - nums[i];
-            map<int, int>::iterator iter = d.find(diff);
-
-            if (iter != d.end() && d[diff] != i + 1) {
+            iter = d.find(diff);
+            if (iter == d.end()) {
+                d[nums[i]] = i;
+            } else {
+                ret.push_back(d[diff]+1);
                 ret.push_back(i+1);
-                ret.push_back(d[diff]);
                 return ret;
             }
         }
+
         return ret;
     }
 };
