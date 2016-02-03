@@ -1,2 +1,3 @@
 PROJECT(LEETCODE)
 
+ADD_EXECUTABLE(two_sum two_sum)
