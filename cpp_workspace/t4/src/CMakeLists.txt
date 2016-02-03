@@ -1,0 +1,5 @@
+INCLUDE_DIRECTORIES(/tmp/t3/usr/include/hello/)
+LINK_DIRECTORIES(/tmp/t3/usr/lib)
+ADD_EXECUTABLE(main main.c)
+#TARGET_LINK_LIBRARIES(main hello)
+TARGET_LINK_LIBRARIES(main hello)
